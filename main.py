@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +20,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def disable_static_cache(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -114,11 +124,11 @@ class TestOptimizer:
                         can_run_parallel = False
                         break
                 
-                # Check resource constraints
-                if (can_run_parallel and 
+                # Check resource constraints (memory in MB, scale appropriately)
+                if (can_run_parallel and
                     len(current_group) < max_parallel and
                     current_resources["cpu"] + test_cpu <= max_parallel and
-                    current_resources["memory"] + test_memory <= max_parallel * 2):
+                    current_resources["memory"] + test_memory <= max_parallel * 4096):
                     
                     current_group.append(test)
                     current_resources["cpu"] += test_cpu
