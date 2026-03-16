@@ -61,27 +61,34 @@ class TestOptimizer:
         try:
             # Get topological order
             topo_order = list(nx.topological_sort(self.dependency_graph))
-            
-            # Sort by priority within each level
+
+            # Calculate dependency level for each node (how many levels of dependencies)
             levels = {}
             for node in topo_order:
-                level = nx.shortest_path_length(self.dependency_graph, 
-                                               source=list(self.dependency_graph.nodes())[0], 
-                                               target=node) if list(self.dependency_graph.nodes()) else 0
+                # Get all predecessors (nodes this node depends on)
+                predecessors = list(self.dependency_graph.predecessors(node))
+                if not predecessors:
+                    level = 0
+                else:
+                    # Level is 1 + max level of any predecessor
+                    level = 1 + max(levels.get(pred, 0) for pred in predecessors)
+
                 if level not in levels:
                     levels[level] = []
                 levels[level].append(node)
-            
+
+            # Sort by priority within each level
             for level in levels:
-                levels[level].sort(key=lambda x: self.dependency_graph.nodes[x]['priority'], 
+                levels[level].sort(key=lambda x: self.dependency_graph.nodes[x]['priority'],
                                  reverse=True)
-            
+
+            # Reconstruct order from levels
             optimized_order = []
             for level in sorted(levels.keys()):
                 optimized_order.extend(levels[level])
-            
+
             return optimized_order
-        except nx.NetworkXError:
+        except Exception:
             return list(self.dependency_graph.nodes())
     
     def optimize_parallel_execution(self, max_parallel: int) -> List[List[str]]:
