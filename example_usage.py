@@ -3,12 +3,9 @@ Example usage of the Test Execution Optimizer
 Demonstrates various features and integration patterns
 """
 
-import asyncio
-import json
-import time
+
 from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrategy
-from test_optimizer_api import app
-from ci_integrations import create_jenkins_integration, create_github_integration
+from ci_integrations import create_github_integration
 
 def create_sample_test_suite():
     """Create a sample test suite for demonstration"""
@@ -174,27 +171,11 @@ def demonstrate_ci_integration():
     print("=== CI/CD Integration Demo ===\n")
     
     # Note: These are examples - actual credentials would be needed
-    print("1. Jenkins Integration Example:")
-    print("   jenkins = create_jenkins_integration(")
-    print("       jenkins_url='http://jenkins.company.com:8080',")
-    print("       job_name='test-suite',")
-    print("       username='user',")
-    print("       password='api-token'")
-    print("   )")
-    print()
-    
-    print("2. GitHub Actions Integration Example:")
+    print("1. GitHub Actions Integration Example:")
     print("   github = create_github_integration(")
     print("       repo_owner='company',")
     print("       repo_name='project',")
     print("       token='github-token'")
-    print("   )")
-    print()
-    
-    print("3. GitLab CI Integration Example:")
-    print("   gitlab = create_gitlab_integration(")
-    print("       project_id='123',")
-    print("       token='gitlab-token'")
     print("   )")
     print()
 
@@ -283,14 +264,6 @@ def create_configuration_example():
     
     # Example CI configuration
     ci_config = {
-        "jenkins": {
-            "url": "http://jenkins.company.com:8080",
-            "job_name": "automated-tests",
-            "credentials": {
-                "username": "test-bot",
-                "api_token": "jenkins-api-token"
-            }
-        },
         "github": {
             "repo_owner": "company",
             "repo_name": "project",
@@ -358,5 +331,5 @@ if __name__ == "__main__":
     
     print("=" * 50)
     print("Demo completed! Start the API server with:")
-    print("python test_optimizer_api.py")
+    print("python main.py")
     print("Then visit: http://localhost:8000/static/dashboard.html")

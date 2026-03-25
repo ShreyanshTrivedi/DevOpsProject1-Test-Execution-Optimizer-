@@ -5,12 +5,11 @@ Core optimization algorithms and ML-based predictions
 
 import networkx as nx
 import numpy as np
-from sklearn.linear_model import LinearRegression
+
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from typing import List, Dict, Tuple, Optional
-import json
-import time
+
 from dataclasses import dataclass
 from enum import Enum
 

@@ -10,8 +10,7 @@
 6. [Configuration](#configuration)
 7. [CI/CD Integration](#cicd-integration)
 8. [Docker Deployment](#docker-deployment)
-9. [Kubernetes Deployment](#kubernetes-deployment)
-10. [Troubleshooting](#troubleshooting)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -234,27 +233,6 @@ Each test supports these parameters:
 
 ## CI/CD Integration
 
-### Jenkins
-
-```groovy
-pipeline {
-    agent any
-
-    stages {
-        stage('Optimize Tests') {
-            steps {
-                script {
-                    sh 'python -c "
-from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrategy
-# Your optimization code here
-"'
-                }
-            }
-        }
-    }
-}
-```
-
 ### GitHub Actions
 
 ```yaml
@@ -269,18 +247,17 @@ from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrat
 ### Using CI Integrations Module
 
 ```python
-from ci_integrations import create_jenkins_integration, create_github_integration
+from ci_integrations import create_github_integration
 
-# Jenkins integration
-jenkins = create_jenkins_integration(
-    jenkins_url="http://jenkins:8080",
-    job_name="test-job",
-    username="user",
-    api_token="your-token"
+# GitHub Actions integration
+github = create_github_integration(
+    repo_owner="your-org",
+    repo_name="your-repo",
+    token="your-token"
 )
 
 # Get test results from CI
-test_results = jenkins.get_test_results()
+test_results = github.get_test_suite()
 ```
 
 ---
@@ -315,54 +292,7 @@ docker-compose -f infrastructure/docker/docker-compose.yml up -d
 http://localhost:8000
 ```
 
----
 
-## Kubernetes Deployment
-
-### Apply Manifests
-
-```bash
-# Using kubectl
-kubectl apply -f infrastructure/kubernetes/
-
-# Using kustomize
-kubectl apply -k infrastructure/kubernetes/
-```
-
-### Verify Deployment
-
-```bash
-# Check pods
-kubectl get pods -l app=test-optimizer
-
-# Check service
-kubectl get svc test-optimizer
-
-# View logs
-kubectl logs -l app=test-optimizer
-```
-
-### Access Service
-
-```bash
-# Port forward for local access
-kubectl port-forward svc/test-optimizer 8000:80
-
-# Or use ingress (if configured)
-http://test-optimizer.local
-```
-
-### Scaling
-
-```bash
-# Manual scale
-kubectl scale deployment test-optimizer --replicas=5
-
-# Auto-scaling is configured via HPA
-# Scales between 2-10 replicas based on CPU/memory
-```
-
----
 
 ## Optimization Strategies
 
@@ -432,15 +362,7 @@ lsof -i :8000
 PORT=8080 python main.py
 ```
 
-#### 4. Kubernetes Pod Crash
 
-**Problem:** Pods in CrashLoopBackOff
-
-**Solution:** Check logs:
-```bash
-kubectl logs <pod-name>
-kubectl describe pod <pod-name>
-```
 
 #### 5. ML Model Not Training
 
@@ -501,7 +423,4 @@ curl -X POST http://localhost:8000/optimize -H "Content-Type: application/json" 
 
 # Run with Docker
 docker run -p 8000:8000 test-optimizer:latest
-
-# Deploy to Kubernetes
-kubectl apply -f infrastructure/kubernetes/
 ```

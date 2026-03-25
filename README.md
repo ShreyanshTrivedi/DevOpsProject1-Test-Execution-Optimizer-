@@ -7,7 +7,7 @@ An intelligent test execution optimization system that reduces test suite runtim
 - **Dependency Analysis**: Automatically detects and resolves test dependencies
 - **Multiple Optimization Strategies**: Time-based, priority-based, resource-based, ML-based, and hybrid approaches
 - **Parallel Execution**: Groups tests for optimal parallel execution
-- **CI/CD Integration**: Supports Jenkins, GitHub Actions, GitLab CI, and Azure DevOps
+- **CI/CD Integration**: Supports GitHub Actions
 - **Machine Learning**: Learns from historical execution data to improve predictions
 - **Real-time Dashboard**: Interactive web interface for monitoring and configuration
 - **Performance Analytics**: Detailed reports and performance comparisons
@@ -86,18 +86,6 @@ python main.py
 
 ### CI/CD Integration
 
-#### Jenkins
-```python
-from ci_integrations import create_jenkins_integration
-
-jenkins = create_jenkins_integration(
-    jenkins_url="http://jenkins-server:8080",
-    job_name="test-job",
-    username="user",
-    password="token"
-)
-```
-
 #### GitHub Actions
 ```python
 from ci_integrations import create_github_integration
@@ -106,16 +94,6 @@ github = create_github_integration(
     repo_owner="your-org",
     repo_name="your-repo",
     token="github-token"
-)
-```
-
-#### GitLab CI
-```python
-from ci_integrations import create_gitlab_integration
-
-gitlab = create_gitlab_integration(
-    project_id="123",
-    token="gitlab-token"
 )
 ```
 
