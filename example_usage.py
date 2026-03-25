@@ -3,6 +3,8 @@ Example usage of the Test Execution Optimizer
 Demonstrates various features and integration patterns
 """
 
+import json
+import time
 
 from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrategy
 from ci_integrations import create_github_integration
