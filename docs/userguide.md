@@ -159,6 +159,9 @@ curl http://localhost:8000/
 
 ```python
 from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrategy
+from ci_integrations import create_github_integration
+
+# See example_usage.py for comprehensive usage examples
 
 # Create optimizer
 optimizer = AdvancedTestOptimizer()
@@ -364,7 +367,7 @@ PORT=8080 python main.py
 
 
 
-#### 5. ML Model Not Training
+#### 4. ML Model Not Training
 
 **Problem:** `is_trained` remains False
 
@@ -386,8 +389,6 @@ for i in range(10):
 | GET | / | API information |
 | GET | /health | Health check |
 | POST | /optimize | Optimize test execution |
-| GET | /metrics | Performance metrics |
-| POST | /history/record | Record execution result |
 
 ### Response Codes
 

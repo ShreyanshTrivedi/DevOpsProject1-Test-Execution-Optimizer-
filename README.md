@@ -18,7 +18,7 @@ An intelligent test execution optimization system that reduces test suite runtim
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/your-org/test-execution-optimizer.git
 cd test-execution-optimizer
 
 # Install dependencies
@@ -74,6 +74,7 @@ python main.py
 - **`main.py`**: FastAPI web server and REST API endpoints
 - **`test_optimizer.py`**: Advanced optimization algorithms and ML models
 - **`ci_integrations.py`**: CI/CD platform integrations
+- **`example_usage.py`**: Comprehensive usage examples and demonstrations
 - **`static/dashboard.html`**: Interactive web dashboard
 
 ### Optimization Strategies

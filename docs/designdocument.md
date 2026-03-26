@@ -11,8 +11,8 @@ An intelligent test execution optimization system that reduces test suite runtim
 test-execution-optimizer/
 ├── main.py                 # FastAPI web server
 ├── test_optimizer.py       # Core optimization algorithms
-├── test_optimizer_api.py   # API endpoints
 ├── ci_integrations.py      # CI/CD integrations
+├── example_usage.py        # Usage examples and demonstrations
 ├── requirements.txt        # Python dependencies
 │
 ├── infrastructure/
@@ -20,8 +20,16 @@ test-execution-optimizer/
 │       ├── Dockerfile
 │       └── docker-compose.yml
 │
-└── pipelines/
-    └── Jenkinsfile
+├── static/
+│   └── dashboard.html      # Web dashboard
+│
+├── tests/
+│   └── unit/
+│       └── test_optimizer_unit.py
+│
+└── .github/
+    └── workflows/
+        └── cicd.yml       # GitHub Actions CI/CD
 ```
 
 ### Technology Stack
