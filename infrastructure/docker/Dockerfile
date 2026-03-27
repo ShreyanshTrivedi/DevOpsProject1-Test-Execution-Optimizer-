@@ -22,7 +22,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY main.py .
 COPY test_optimizer.py .
-COPY ci_integrations.py .
 COPY example_usage.py .
 COPY static/ ./static/
 
