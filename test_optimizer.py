@@ -1,14 +1,10 @@
 """
 Advanced Test Execution Optimizer
-Core optimization algorithms and ML-based predictions
+Core optimization algorithms
 """
 
 import networkx as nx
-import numpy as np
-
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import StandardScaler
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Optional
 import time
 
 from dataclasses import dataclass
@@ -18,8 +14,6 @@ class OptimizationStrategy(Enum):
     TIME_BASED = "time_based"
     PRIORITY_BASED = "priority_based"
     RESOURCE_BASED = "resource_based"
-    ML_BASED = "ml_based"
-    HYBRID = "hybrid"
 
 @dataclass
 class TestMetrics:
@@ -38,107 +32,12 @@ class TestMetrics:
         if self.resource_usage is None:
             self.resource_usage = {}
 
-class MLOptimizer:
-    """Machine learning based test time prediction"""
-    
-    def __init__(self):
-        self.time_model = RandomForestRegressor(n_estimators=100, random_state=42)
-        self.failure_model = RandomForestRegressor(n_estimators=100, random_state=42)
-        self.scaler = StandardScaler()
-        self.is_trained = False
-        self.feature_columns = ['priority', 'dependency_count', 'cpu_usage', 'memory_usage', 'historical_avg_time']
-    
-    def extract_features(self, test: TestMetrics, historical_data: Dict[str, List[float]]) -> np.ndarray:
-        """Extract features for ML prediction"""
-        features = [
-            test.priority,
-            len(test.dependencies),
-            test.resource_usage.get('cpu', 1),
-            test.resource_usage.get('memory', 512),
-            np.mean(historical_data.get(test.name, [test.estimated_time]))
-        ]
-        return np.array(features).reshape(1, -1)
-    
-    def train(self, training_data: List[Tuple[TestMetrics, float]]):
-        """Train ML models on historical data"""
-        if len(training_data) < 5:
-            return False
-        
-        X = []
-        y_time = []
-        y_failure = []
-        
-        for test, actual_time in training_data:
-            features = [
-                test.priority,
-                len(test.dependencies),
-                test.resource_usage.get('cpu', 1),
-                test.resource_usage.get('memory', 512),
-                test.estimated_time
-            ]
-            X.append(features)
-            y_time.append(actual_time)
-            y_failure.append(test.failure_rate)
-        
-        X = np.array(X)
-        y_time = np.array(y_time)
-        y_failure = np.array(y_failure)
-        
-        # Scale features
-        X_scaled = self.scaler.fit_transform(X)
-        
-        # Train models
-        self.time_model.fit(X_scaled, y_time)
-        self.failure_model.fit(X_scaled, y_failure)
-        self.is_trained = True
-        
-        return True
-    
-    def predict_execution_time(self, test: TestMetrics) -> float:
-        """Predict test execution time"""
-        if not self.is_trained:
-            return test.estimated_time
-        
-        features = [
-            test.priority,
-            len(test.dependencies),
-            test.resource_usage.get('cpu', 1),
-            test.resource_usage.get('memory', 512),
-            test.estimated_time
-        ]
-        
-        X = np.array(features).reshape(1, -1)
-        X_scaled = self.scaler.transform(X)
-        
-        predicted_time = self.time_model.predict(X_scaled)[0]
-        return max(0.1, predicted_time)  # Ensure positive time
-    
-    def predict_failure_probability(self, test: TestMetrics) -> float:
-        """Predict test failure probability"""
-        if not self.is_trained:
-            return test.failure_rate
-        
-        features = [
-            test.priority,
-            len(test.dependencies),
-            test.resource_usage.get('cpu', 1),
-            test.resource_usage.get('memory', 512),
-            test.estimated_time
-        ]
-        
-        X = np.array(features).reshape(1, -1)
-        X_scaled = self.scaler.transform(X)
-        
-        return max(0.0, min(1.0, self.failure_model.predict(X_scaled)[0]))
-
 class AdvancedTestOptimizer:
     """Advanced test execution optimizer with multiple strategies"""
     
     def __init__(self):
         self.dependency_graph = nx.DiGraph()
-        self.ml_optimizer = MLOptimizer()
         self.execution_history = []
-        self.historical_data = {}
         self.optimization_cache = {}
     
     def load_test_suite(self, tests: List[TestMetrics]):
@@ -162,18 +61,6 @@ class AdvancedTestOptimizer:
         if not nx.is_directed_acyclic_graph(self.dependency_graph):
             raise ValueError("Circular dependencies detected in test suite")
     
-    def train_ml_models(self):
-        """Train ML models with historical data"""
-        if len(self.execution_history) >= 5:
-            training_data = []
-            for record in self.execution_history:
-                test_name = record['test']
-                if test_name in self.dependency_graph.nodes:
-                    test_node = self.dependency_graph.nodes[test_name]['test']
-                    training_data.append((test_node, record['actual_time']))
-            
-            self.ml_optimizer.train(training_data)
-    
     def optimize_with_strategy(self, strategy: OptimizationStrategy, max_parallel: int = 4) -> Dict:
         """Optimize test execution using specified strategy"""
         cache_key = f"{strategy.value}_{max_parallel}"
@@ -186,10 +73,6 @@ class AdvancedTestOptimizer:
             result = self._optimize_priority_based(max_parallel)
         elif strategy == OptimizationStrategy.RESOURCE_BASED:
             result = self._optimize_resource_based(max_parallel)
-        elif strategy == OptimizationStrategy.ML_BASED:
-            result = self._optimize_ml_based(max_parallel)
-        elif strategy == OptimizationStrategy.HYBRID:
-            result = self._optimize_hybrid(max_parallel)
         else:
             result = self._optimize_time_based(max_parallel)
         
@@ -271,47 +154,6 @@ class AdvancedTestOptimizer:
             'strategy': 'resource_based'
         }
     
-    def _optimize_ml_based(self, max_parallel: int) -> Dict:
-        """ML-based optimization using predicted times and failure rates"""
-        # Update times with ML predictions
-        for test_name in self.dependency_graph.nodes:
-            test_node = self.dependency_graph.nodes[test_name]['test']
-            predicted_time = self.ml_optimizer.predict_execution_time(test_node)
-            self.dependency_graph.nodes[test_name]['time'] = predicted_time
-            
-            # Consider failure probability in priority
-            failure_prob = self.ml_optimizer.predict_failure_probability(test_node)
-            adjusted_priority = test_node.priority * (1 + failure_prob * 0.5)  # Increase priority for failure-prone tests
-            self.dependency_graph.nodes[test_name]['priority'] = adjusted_priority
-        
-        # Use hybrid approach with ML-enhanced data
-        return self._optimize_hybrid(max_parallel)
-    
-    def _optimize_hybrid(self, max_parallel: int) -> Dict:
-        """Hybrid optimization combining multiple factors"""
-        optimized_order = list(nx.topological_sort(self.dependency_graph))
-        
-        # Calculate composite score for each test
-        levels = self._get_dependency_levels()
-        for level in levels:
-            level_tests = levels[level]
-            level_tests.sort(key=lambda x: self._calculate_composite_score(x))
-            levels[level] = level_tests
-        
-        # Reconstruct order
-        final_order = []
-        for level in sorted(levels.keys()):
-            final_order.extend(levels[level])
-        
-        parallel_groups = self._create_parallel_groups(final_order, max_parallel)
-        
-        return {
-            'optimized_order': final_order,
-            'parallel_groups': parallel_groups,
-            'estimated_time': self._calculate_total_time(parallel_groups),
-            'strategy': 'hybrid'
-        }
-    
     def _get_dependency_levels(self) -> Dict[int, List[str]]:
         """Group tests by dependency level"""
         levels = {}
@@ -343,17 +185,6 @@ class AdvancedTestOptimizer:
         memory_score = resources.get('memory', 512) / time / 1024  # Convert to GB
         
         return cpu_score + memory_score
-    
-    def _calculate_composite_score(self, test_name: str) -> float:
-        """Calculate composite optimization score"""
-        node_data = self.dependency_graph.nodes[test_name]
-        
-        # Factors: time (lower is better), priority (higher is better), failure rate (higher is better for early detection)
-        time_score = 1 / (node_data['time'] + 0.1)  # Avoid division by zero
-        priority_score = node_data['priority'] / 10  # Normalize to 0-1
-        failure_score = node_data.get('failure_rate', 0) * 2  # Weight failure detection
-        
-        return time_score + priority_score + failure_score
     
     def _create_parallel_groups(self, test_order: List[str], max_parallel: int) -> List[List[str]]:
         """Create parallel execution groups"""
@@ -405,26 +236,13 @@ class AdvancedTestOptimizer:
         return total_time
     
     def record_execution_result(self, test_name: str, actual_time: float, success: bool):
-        """Record test execution result for learning"""
+        """Record test execution result"""
         self.execution_history.append({
             'test': test_name,
             'actual_time': actual_time,
             'success': success,
             'timestamp': time.time()
         })
-        
-        # Update historical data
-        if test_name not in self.historical_data:
-            self.historical_data[test_name] = []
-        self.historical_data[test_name].append(actual_time)
-        
-        # Keep only last 50 executions per test
-        if len(self.historical_data[test_name]) > 50:
-            self.historical_data[test_name] = self.historical_data[test_name][-50:]
-        
-        # Retrain ML models periodically
-        if len(self.execution_history) % 10 == 0:
-            self.train_ml_models()
     
     def get_optimization_report(self) -> Dict:
         """Generate comprehensive optimization report"""
@@ -432,8 +250,11 @@ class AdvancedTestOptimizer:
             return {"error": "No test suite loaded"}
         
         # Test different strategies
-        strategies = [OptimizationStrategy.TIME_BASED, OptimizationStrategy.PRIORITY_BASED, 
-                     OptimizationStrategy.HYBRID]
+        strategies = [
+            OptimizationStrategy.TIME_BASED,
+            OptimizationStrategy.PRIORITY_BASED,
+            OptimizationStrategy.RESOURCE_BASED,
+        ]
         
         results = {}
         original_time = sum(self.dependency_graph.nodes[node]['time'] for node in self.dependency_graph.nodes())
@@ -452,5 +273,5 @@ class AdvancedTestOptimizer:
             'original_time': original_time,
             'strategy_comparison': results,
             'historical_executions': len(self.execution_history),
-            'ml_trained': self.ml_optimizer.is_trained
+            'ml_trained': False
         }

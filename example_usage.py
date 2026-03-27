@@ -7,7 +7,6 @@ import json
 import time
 
 from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrategy
-from ci_integrations import create_github_integration
 
 def create_sample_test_suite():
     """Create a sample test suite for demonstration"""
@@ -114,7 +113,6 @@ def demonstrate_basic_optimization():
         OptimizationStrategy.TIME_BASED,
         OptimizationStrategy.PRIORITY_BASED,
         OptimizationStrategy.RESOURCE_BASED,
-        OptimizationStrategy.HYBRID
     ]
     
     for strategy in strategies:
@@ -130,55 +128,11 @@ def demonstrate_basic_optimization():
         print(f"Improvement: {improvement:.1f}%")
         print()
 
-def simulate_ml_learning():
-    """Demonstrate ML learning from execution history"""
-    print("=== Machine Learning Learning Demo ===\n")
-    
-    optimizer = AdvancedTestOptimizer()
-    tests = create_sample_test_suite()
-    optimizer.load_test_suite(tests)
-    
-    # Simulate historical execution data
-    print("Simulating historical execution data...")
-    for i, test in enumerate(tests[:5]):  # Simulate 5 executions
-        # Simulate actual execution times with some variance
-        actual_time = test.estimated_time * (0.8 + (i * 0.1))
-        success = i % 4 != 0  # Simulate occasional failures
-        
-        optimizer.record_execution_result(test.name, actual_time, success)
-        print(f"Recorded: {test.name} - {actual_time:.1f}s - {'PASS' if success else 'FAIL'}")
-    
-    print(f"\nTotal recorded executions: {len(optimizer.execution_history)}")
-    
-    # Train ML models
-    if optimizer.train_ml_models():
-        print("ML models trained successfully!")
-        
-        # Compare predictions
-        print("\n--- Time Predictions Comparison ---")
-        for test in tests[:3]:
-            original_time = test.estimated_time
-            predicted_time = optimizer.ml_optimizer.predict_execution_time(test)
-            print(f"{test.name}:")
-            print(f"  Original: {original_time:.1f}s")
-            print(f"  Predicted: {predicted_time:.1f}s")
-            print(f"  Difference: {abs(predicted_time - original_time):.1f}s")
-    else:
-        print("Insufficient data for ML training")
-    
-    print()
-
 def demonstrate_ci_integration():
-    """Demonstrate CI/CD integration capabilities"""
-    print("=== CI/CD Integration Demo ===\n")
-    
-    # Note: These are examples - actual credentials would be needed
-    print("1. GitHub Actions Integration Example:")
-    print("   github = create_github_integration(")
-    print("       repo_owner='company',")
-    print("       repo_name='project',")
-    print("       token='github-token'")
-    print("   )")
+    """Demonstrate CI/CD integration capabilities - DEPRECATED"""
+    print("=== CI/CD Integration Demo (DEPRECATED) ===\n")
+    print("CI/CD integration module has been removed for simplicity.")
+    print("To integrate with CI/CD platforms, use the REST API endpoints directly.")
     print()
 
 def demonstrate_api_usage():
@@ -198,7 +152,7 @@ def demonstrate_api_usage():
     print("       }")
     print("     ],")
     print("     \"max_parallel\": 4,")
-    print("     \"optimization_strategy\": \"hybrid\"")
+    print("     \"optimization_strategy\": \"time_based\"")
     print("   }'")
     print()
     
@@ -213,8 +167,8 @@ def demonstrate_api_usage():
     print("   }'")
     print()
     
-    print("3. Get Optimization Report:")
-    print("   curl -X GET 'http://localhost:8000/report'")
+    print("3. View Optimization History:")
+    print("   curl -X GET 'http://localhost:8000/execution/history'")
     print()
 
 def create_configuration_example():
@@ -223,7 +177,7 @@ def create_configuration_example():
     
     # Example test configuration
     test_config = {
-        "test_suite": [
+        "tests": [
             {
                 "name": "authentication_tests",
                 "estimated_time": 5.0,
@@ -251,8 +205,7 @@ def create_configuration_example():
         ],
         "optimization_settings": {
             "max_parallel": 4,
-            "strategy": "hybrid",
-            "enable_ml": True,
+            "strategy": "time_based",
             "resource_limits": {
                 "cpu": 16,
                 "memory": 32768
@@ -307,7 +260,7 @@ def run_performance_benchmark():
         # Benchmark optimization
         start_time = time.time()
         optimizer.load_test_suite(tests)
-        result = optimizer.optimize_with_strategy(OptimizationStrategy.HYBRID, max_parallel=4)
+        result = optimizer.optimize_with_strategy(OptimizationStrategy.TIME_BASED, max_parallel=4)
         end_time = time.time()
         
         optimization_time = end_time - start_time
@@ -320,12 +273,12 @@ def run_performance_benchmark():
     print()
 
 if __name__ == "__main__":
-    print("Test Execution Optimizer - Example Usage\n")
-    print("=" * 50)
+    print("\n" + "=" * 50)
+    print("Running Test Execution Optimizer Demonstrations")
+    print("=" * 50 + "\n")
     
     # Run all demonstrations
     demonstrate_basic_optimization()
-    simulate_ml_learning()
     demonstrate_ci_integration()
     demonstrate_api_usage()
     create_configuration_example()

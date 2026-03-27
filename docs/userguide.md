@@ -20,7 +20,6 @@ Test Execution Optimizer is an intelligent system that reduces test suite runtim
 
 - **Optimizing test order** based on dependencies and priorities
 - **Enabling parallel execution** with resource constraints
-- **Machine learning predictions** for accurate time estimates
 - **Multiple strategies** for different optimization goals
 
 ---
@@ -121,7 +120,7 @@ curl -X POST "http://localhost:8000/optimize" \
       }
     ],
     "max_parallel": 4,
-    "optimization_strategy": "hybrid"
+    "optimization_strategy": "time_based"
   }'
 ```
 
@@ -159,7 +158,6 @@ curl http://localhost:8000/
 
 ```python
 from test_optimizer import AdvancedTestOptimizer, TestMetrics, OptimizationStrategy
-from ci_integrations import create_github_integration
 
 # See example_usage.py for comprehensive usage examples
 
@@ -196,7 +194,7 @@ optimizer.load_test_suite(tests)
 
 # Optimize with strategy
 result = optimizer.optimize_with_strategy(
-    OptimizationStrategy.HYBRID,
+    OptimizationStrategy.TIME_BASED,
     max_parallel=4
 )
 
@@ -245,22 +243,6 @@ Each test supports these parameters:
     from test_optimizer import AdvancedTestOptimizer
     # Your optimization code here
     "
-```
-
-### Using CI Integrations Module
-
-```python
-from ci_integrations import create_github_integration
-
-# GitHub Actions integration
-github = create_github_integration(
-    repo_owner="your-org",
-    repo_name="your-repo",
-    token="your-token"
-)
-
-# Get test results from CI
-test_results = github.get_test_suite()
 ```
 
 ---
@@ -314,16 +296,6 @@ http://localhost:8000
 - Optimizes parallel execution
 - Use case: Limited resources
 
-### ML-Based
-- Uses machine learning predictions
-- Learns from historical data
-- Best accuracy over time
-
-### Hybrid
-- Combines time, priority, and failure rate
-- Best overall performance
-- Recommended for most use cases
-
 ---
 
 ## Troubleshooting
@@ -366,17 +338,6 @@ PORT=8080 python main.py
 ```
 
 
-
-#### 4. ML Model Not Training
-
-**Problem:** `is_trained` remains False
-
-**Solution:** Record more execution results:
-```python
-# Record at least 5 execution results
-for i in range(10):
-    optimizer.record_execution_result("test1", 2.5, True)
-```
 
 ---
 

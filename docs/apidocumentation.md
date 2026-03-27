@@ -101,7 +101,7 @@ Optimizes test execution order based on provided test suite.
     }
   ],
   "max_parallel": 4,
-  "optimization_strategy": "hybrid"
+  "optimization_strategy": "time_based"
 }
 ```
 
@@ -192,18 +192,6 @@ Balances CPU and memory usage for optimal parallel execution.
 
 **Best for:** Resource-constrained environments
 
-### ml_based
-
-Uses machine learning to predict execution times based on historical data.
-
-**Best for:** Mature test suites with execution history
-
-### hybrid
-
-Combines time, priority, and failure rate for best overall performance.
-
-**Best for:** Most use cases (recommended)
-
 ---
 
 ## Error Codes
@@ -257,7 +245,7 @@ payload = {
         }
     ],
     "max_parallel": 4,
-    "optimization_strategy": "hybrid"
+    "optimization_strategy": "time_based"
 }
 
 response = requests.post(url, json=payload)
@@ -297,7 +285,7 @@ const response = await fetch('http://localhost:8000/optimize', {
       { name: 'test_api', estimated_time: 5.0, dependencies: ['test_auth'] }
     ],
     max_parallel: 4,
-    optimization_strategy: 'hybrid'
+    optimization_strategy: 'time_based'
   })
 });
 
@@ -350,4 +338,3 @@ Future versions will be available at:
 - GET /health endpoint
 - Multiple optimization strategies
 - Parallel execution groups
-- ML-based predictions

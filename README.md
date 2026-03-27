@@ -5,10 +5,9 @@ An intelligent test execution optimization system that reduces test suite runtim
 ## Features
 
 - **Dependency Analysis**: Automatically detects and resolves test dependencies
-- **Multiple Optimization Strategies**: Time-based, priority-based, resource-based, ML-based, and hybrid approaches
+- **Multiple Optimization Strategies**: Time-based, priority-based, and resource-based approaches
 - **Parallel Execution**: Groups tests for optimal parallel execution
 - **CI/CD Integration**: Supports GitHub Actions
-- **Machine Learning**: Learns from historical execution data to improve predictions
 - **Real-time Dashboard**: Interactive web interface for monitoring and configuration
 - **Performance Analytics**: Detailed reports and performance comparisons
 
@@ -63,7 +62,7 @@ python main.py
    -d '{
      "tests": [...],
      "max_parallel": 4,
-     "optimization_strategy": "hybrid"
+     "optimization_strategy": "time_based"
    }'
    ```
 
@@ -72,8 +71,7 @@ python main.py
 ### Core Components
 
 - **`main.py`**: FastAPI web server and REST API endpoints
-- **`test_optimizer.py`**: Advanced optimization algorithms and ML models
-- **`ci_integrations.py`**: CI/CD platform integrations
+- **`test_optimizer.py`**: Optimization algorithms
 - **`example_usage.py`**: Comprehensive usage examples and demonstrations
 - **`static/dashboard.html`**: Interactive web dashboard
 
@@ -82,21 +80,6 @@ python main.py
 1. **Time-Based**: Prioritizes faster tests for quick feedback
 2. **Priority-Based**: Executes high-priority tests first
 3. **Resource-Based**: Balances CPU and memory usage
-4. **ML-Based**: Uses machine learning for time prediction
-5. **Hybrid**: Combines multiple factors for optimal results
-
-### CI/CD Integration
-
-#### GitHub Actions
-```python
-from ci_integrations import create_github_integration
-
-github = create_github_integration(
-    repo_owner="your-org",
-    repo_name="your-repo",
-    token="github-token"
-)
-```
 
 ## API Reference
 
@@ -117,7 +100,7 @@ Optimizes test execution order based on provided test suite.
     }
   ],
   "max_parallel": 4,
-  "optimization_strategy": "hybrid"
+  "optimization_strategy": "time_based"
 }
 ```
 
@@ -171,14 +154,6 @@ The optimizer typically achieves:
 
 ## Advanced Features
 
-### Machine Learning Integration
-
-The system learns from historical execution data to:
-- Predict more accurate test execution times
-- Identify flaky tests
-- Optimize based on failure patterns
-- Adapt to your specific test environment
-
 ### Resource-Aware Scheduling
 
 Considers:
@@ -186,13 +161,6 @@ Considers:
 - Memory constraints
 - Network bandwidth
 - Disk I/O requirements
-
-### Failure Prediction
-
-Prioritizes potentially failing tests for:
-- Faster feedback on broken builds
-- Early issue detection
-- Better resource utilization
 
 ## Contributing
 

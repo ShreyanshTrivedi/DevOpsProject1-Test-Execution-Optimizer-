@@ -11,7 +11,6 @@ An intelligent test execution optimization system that reduces test suite runtim
 test-execution-optimizer/
 ├── main.py                 # FastAPI web server
 ├── test_optimizer.py       # Core optimization algorithms
-├── ci_integrations.py      # CI/CD integrations
 ├── example_usage.py        # Usage examples and demonstrations
 ├── requirements.txt        # Python dependencies
 │
@@ -35,7 +34,6 @@ test-execution-optimizer/
 ### Technology Stack
 - **Language**: Python 3.11
 - **Web Framework**: FastAPI
-- **ML Libraries**: scikit-learn, numpy
 - **Graph Analysis**: NetworkX
 - **Containerization**: Docker
 
@@ -61,15 +59,6 @@ Using NetworkX DiGraph for dependency management because:
 - Balances CPU and memory usage
 - Optimizes for parallel execution
 
-#### ML-Based
-- Uses Random Forest for time prediction
-- Learns from historical data
-- Adapts to environment
-
-#### Hybrid
-- Combines time, priority, and failure rate
-- Best overall performance
-
 ### 3. Parallel Execution
 - Creates groups of independent tests
 - Respects dependency constraints
@@ -87,7 +76,7 @@ Request:
 {
   "tests": [...],
   "max_parallel": 4,
-  "optimization_strategy": "hybrid"
+  "optimization_strategy": "time_based"
 }
 ```
 

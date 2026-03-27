@@ -12,8 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from test_optimizer import (
     AdvancedTestOptimizer,
     TestMetrics,
-    OptimizationStrategy,
-    MLOptimizer
+    OptimizationStrategy
 )
 
 
@@ -114,19 +113,19 @@ class TestAdvancedTestOptimizer:
         # Higher priority should come first
         assert result["optimized_order"][0] == "test2"
 
-    def test_hybrid_optimization(self):
-        """Test hybrid optimization strategy"""
+    def test_resource_based_optimization(self):
+        """Test resource-based optimization strategy"""
         optimizer = AdvancedTestOptimizer()
 
         tests = [
-            TestMetrics(name="test1", estimated_time=2.0, priority=5),
-            TestMetrics(name="test2", estimated_time=3.0, priority=3),
+            TestMetrics(name="test1", estimated_time=2.0, resource_usage={"cpu": 2, "memory": 1024}),
+            TestMetrics(name="test2", estimated_time=3.0, resource_usage={"cpu": 1, "memory": 512}),
         ]
 
         optimizer.load_test_suite(tests)
-        result = optimizer.optimize_with_strategy(OptimizationStrategy.HYBRID, max_parallel=2)
+        result = optimizer.optimize_with_strategy(OptimizationStrategy.RESOURCE_BASED, max_parallel=2)
 
-        assert result["strategy"] == "hybrid"
+        assert result["strategy"] == "resource_based"
         assert len(result["optimized_order"]) == 2
 
     def test_parallel_groups_creation(self):
@@ -174,38 +173,6 @@ class TestAdvancedTestOptimizer:
         assert "strategy_comparison" in report
 
 
-class TestMLOptimizer:
-    """Test the ML-based optimizer"""
-
-    def test_create_ml_optimizer(self):
-        """Test creating an ML optimizer"""
-        ml = MLOptimizer()
-        assert ml is not None
-        assert ml.is_trained == False
-
-    def test_extract_features(self):
-        """Test feature extraction"""
-        ml = MLOptimizer()
-        test = TestMetrics(
-            name="test1",
-            estimated_time=5.0,
-            priority=3,
-            dependencies=["dep1"],
-            resource_usage={"cpu": 2, "memory": 1024}
-        )
-
-        features = ml.extract_features(test, {"test1": [5.0, 4.5, 5.5]})
-        assert features.shape[1] == 5  # 5 features
-
-    def test_predict_without_training(self):
-        """Test prediction without training returns estimated time"""
-        ml = MLOptimizer()
-        test = TestMetrics(name="test1", estimated_time=5.0)
-
-        predicted = ml.predict_execution_time(test)
-        assert predicted == 5.0  # Should return estimated time when not trained
-
-
 class TestOptimizationStrategies:
     """Test all optimization strategies"""
 
@@ -213,7 +180,6 @@ class TestOptimizationStrategies:
         OptimizationStrategy.TIME_BASED,
         OptimizationStrategy.PRIORITY_BASED,
         OptimizationStrategy.RESOURCE_BASED,
-        OptimizationStrategy.HYBRID,
     ])
     def test_all_strategies(self, strategy):
         """Test that all strategies work"""
